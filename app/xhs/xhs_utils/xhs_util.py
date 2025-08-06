@@ -2,7 +2,7 @@ import json
 import math
 import random
 import execjs
-from .cookie_util import trans_cookies
+
 from loguru import logger
 import os
 from pathlib import Path
@@ -168,6 +168,14 @@ def splice_str(api, params):
             value = ''
         url += key + '=' + value + '&'
     return url[:-1]
+
+def trans_cookies(cookies_str):
+    if '; ' in cookies_str:
+        ck = {i.split('=')[0]: '='.join(i.split('=')[1:]) for i in cookies_str.split('; ')}
+    else:
+        ck = {i.split('=')[0]: '='.join(i.split('=')[1:]) for i in cookies_str.split(';')}
+    return ck
+
 
 def convert_discovery_to_explore_url(discovery_url):
     """将discovery格式的URL转换为explore格式
