@@ -59,7 +59,7 @@ class Settings(BaseSettings):
             return v
         raise ValueError(v)
 
-    DATABASE_URI: PostgresDsn
+    DATABASE_URI: str
     
 
     SMTP_TLS: bool = True

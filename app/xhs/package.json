@@ -1,0 +1,20 @@
+{
+  "name": "xhs-js-utils",
+  "version": "1.0.0",
+  "description": "JavaScript utilities for XHS API encryption",
+  "main": "static/xhs_xs_xsc_56.js",
+  "dependencies": {
+    "jsdom": "^22.1.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "xhs",
+    "xiaohongshu",
+    "encryption",
+    "api"
+  ],
+  "author": "RedCollector",
+  "license": "MIT"
+}

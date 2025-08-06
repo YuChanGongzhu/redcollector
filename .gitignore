@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+*.pyc
 *$py.class
 
 # C extensions
@@ -132,4 +133,47 @@ dmypy.json
 .idea/
 
 /dump.rdb
+
+# Database migrations
+migrations/
+
+# Node.js dependencies
+node_modules/
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# VS Code
+.vscode/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+logs/
+temp/
+tmp/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Redis dump
+*.rdb
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Local development
+.env.local
+.env.development
+.env.production
 

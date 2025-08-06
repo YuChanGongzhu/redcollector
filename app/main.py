@@ -12,6 +12,7 @@ from .db.config import register_db
 from .health import router as health_check_router
 from .lifetime import startup
 from .users.routes import router as users_router
+from .xhs.routes import router as xhs_router
 
 
 
@@ -23,6 +24,7 @@ def get_application() -> FastAPI:
     )
     _app.include_router(get_auth_router())
     _app.include_router(users_router)
+    _app.include_router(xhs_router)
     _app.include_router(health_check_router)
     _app.add_middleware(
         CORSMiddleware,
