@@ -93,10 +93,12 @@ async def search_comments_by_keyword(request: SearchRequest):
     """
     try:
         api = XhsAPI()
+        comments_list = []
         comments_list = api.search_comments_by_keyword(
             cookies_str=request.cookies,
             keyword=request.keyword,
-            num=request.num
+            num=request.num,
+            comments_list=comments_list
         )
 
         

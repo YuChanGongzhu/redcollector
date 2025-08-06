@@ -438,7 +438,10 @@ class XhsAPI:
                 ]
             }
             
-            final_uri = f"{uri}?{params}"
+            # 将params字典转换为查询字符串
+            from urllib.parse import urlencode
+            query_string = urlencode(params, doseq=True)
+            final_uri = f"{uri}?{query_string}"
             print(final_uri)
             
             # 这里需要实现具体的搜索逻辑
