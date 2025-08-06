@@ -82,9 +82,9 @@ async def search_notes_by_keyword(request: SearchRequest):
         raise HTTPException(status_code=500, detail=f"搜索笔记失败: {str(e)}")
 
 @router.post("/search_comments_by_keyword", response_model=ApiResponse)
-async def search_notes(request: SearchRequest):
-    """根据关键词搜索小红书笔记
-    
+async def search_comments_by_keyword(request: SearchRequest):
+    """根据关键词搜索小红书评论
+
     Args:
         request: 包含cookies、keyword、num等参数的请求体
         
