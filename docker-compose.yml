@@ -1,0 +1,70 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - ./redis_data:/data
+    restart: unless-stopped
+
+  app:
+    image: python:3.11-slim
+    container_name: redcollector-app
+    working_dir: /srv/app
+    env_file:
+      - ./.env
+    volumes:
+      - ./:/srv/app
+    depends_on:
+      redis:
+        condition: service_started
+    ports:
+      - "8000:80"   # 宿主 8000 -> 容器 80（Gunicorn）
+    restart: unless-stopped
+    command: >
+      bash -lc "
+        set -euo pipefail;
+        apt-get update &&
+        apt-get install -y --no-install-recommends
+          build-essential
+          libffi-dev
+          libssl-dev
+          curl &&
+        pip install --no-cache-dir --upgrade pip &&
+        pip install --no-cache-dir poetry &&
+        poetry config virtualenvs.create false &&
+        poetry install --no-dev --no-interaction --no-ansi &&
+        (aerich upgrade || aerich init-db) &&
+        python manage.py run-prod-server
+      "
+
+  worker:
+    image: python:3.11-slim
+    container_name: redcollector-worker
+    working_dir: /srv/app
+    env_file:
+      - ./.env
+    volumes:
+      - ./:/srv/app
+    depends_on:
+      redis:
+        condition: service_started
+      app:
+        condition: service_started
+    restart: unless-stopped
+    command: >
+      bash -lc "
+        set -euo pipefail;
+        apt-get update &&
+        apt-get install -y --no-install-recommends
+          build-essential
+          libffi-dev
+          libssl-dev
+          curl &&
+        pip install --no-cache-dir --upgrade pip &&
+        pip install --no-cache-dir poetry &&
+        poetry config virtualenvs.create false &&
+        poetry install --no-dev --no-interaction --no-ansi &&
+        python manage.py run-worker
+      "
