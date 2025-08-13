@@ -103,6 +103,11 @@ help you manage your project more easily. To get all available commands type thi
 poetry run python manage.py --help
 ```
 
+### Run the fastapi app with uvicorn
+
+```shell
+uvicorn app.main:get_application --factory --host 0.0.0.0 --port 8000 --reload
+```
 ## Credits
 
 This package was created with [Cookiecutter](https://github.com/cookiecutter/cookiecutter) and the [cookiecutter-fastapi](https://github.com/tobi-de/cookiecutter-fastapi) project template.
