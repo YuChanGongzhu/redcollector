@@ -9,58 +9,29 @@ services:
     restart: unless-stopped
 
   app:
-    image: python:3.11-slim
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: redcollector-app
     working_dir: /srv/app
     env_file:
       - ./.env
-    environment:
-      DATABASE_URI: mysql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?charset=utf8mb4
-    volumes:
-      - ./:/srv/app
     depends_on:
-      redis:
-        condition: service_started
+      - redis
     ports:
       - "8000:80"
     restart: unless-stopped
-    command: >
-      bash -lc "
-        set -euo pipefail;
-        apt-get update &&
-        apt-get install -y --no-install-recommends build-essential libffi-dev libssl-dev curl &&
-        pip install --no-cache-dir --upgrade pip &&
-        pip install --no-cache-dir poetry &&
-        poetry config virtualenvs.create false &&
-        poetry install --no-dev --no-interaction --no-ansi &&
-        (aerich upgrade || aerich init-db) &&
-        python manage.py run-prod-server
-      "
+    command: python manage.py run-prod-server
 
   worker:
-    image: python:3.11-slim
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: redcollector-worker
     working_dir: /srv/app
     env_file:
       - ./.env
-    environment:
-      DATABASE_URI: mysql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?charset=utf8mb4
-    volumes:
-      - ./:/srv/app
     depends_on:
-      redis:
-        condition: service_started
-      app:
-        condition: service_started
+      - redis
     restart: unless-stopped
-    command: >
-      bash -lc "
-        set -euo pipefail;
-        apt-get update &&
-        apt-get install -y --no-install-recommends build-essential libffi-dev libssl-dev curl &&
-        pip install --no-cache-dir --upgrade pip &&
-        pip install --no-cache-dir poetry &&
-        poetry config virtualenvs.create false &&
-        poetry install --no-dev --no-interaction --no-ansi &&
-        python manage.py run-worker
-      "
+    command: python manage.py run-worker
