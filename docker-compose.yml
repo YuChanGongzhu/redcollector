@@ -26,11 +26,7 @@ services:
       bash -lc "
         set -euo pipefail;
         apt-get update &&
-        apt-get install -y --no-install-recommends
-          build-essential
-          libffi-dev
-          libssl-dev
-          curl &&
+        apt-get install -y --no-install-recommends build-essential libffi-dev libssl-dev curl &&
         pip install --no-cache-dir --upgrade pip &&
         pip install --no-cache-dir poetry &&
         poetry config virtualenvs.create false &&
@@ -57,11 +53,7 @@ services:
       bash -lc "
         set -euo pipefail;
         apt-get update &&
-        apt-get install -y --no-install-recommends
-          build-essential
-          libffi-dev
-          libssl-dev
-          curl &&
+        apt-get install -y --no-install-recommends build-essential libffi-dev libssl-dev curl &&
         pip install --no-cache-dir --upgrade pip &&
         pip install --no-cache-dir poetry &&
         poetry config virtualenvs.create false &&
