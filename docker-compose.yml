@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - ./redis_data:/data
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: redcollector-app
+    working_dir: /srv/app
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+    ports:
+      - "8000:80"
+    restart: unless-stopped
+    command: python manage.py run-prod-server
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: redcollector-worker
+    working_dir: /srv/app
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+    restart: unless-stopped
+    command: python manage.py run-worker

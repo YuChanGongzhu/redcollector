@@ -1,30 +1,37 @@
-FROM python:3.10 as requirements-stage
+# 第一阶段：生成 requirements.txt
+FROM python:3.10-slim as requirements-stage
 
 WORKDIR /tmp
 
-RUN pip install poetry
+# 安装 pip 和 poetry
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir poetry
 
+# 复制依赖文件
 COPY ./pyproject.toml ./poetry.lock* /tmp/
 
+# 导出 requirements.txt
 RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-FROM python:3.10-alpine
+# 第二阶段：最终运行镜像
+FROM python:3.10-slim
 
-WORKDIR /code
+WORKDIR /srv/app
 
-RUN apk update \
-    && apk add --virtual build-deps build-base \
-    && apk add --no-cache libffi-dev \
-    && pip install --upgrade pip \
-    && python --version
+# 安装系统依赖
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends build-essential libffi-dev curl bash && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY --from=requirements-stage /tmp/requirements.txt /code/requirements.txt
+# 复制 requirements 并安装
+COPY --from=requirements-stage /tmp/requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir --upgrade -r ./requirements.txt
 
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+# 复制项目代码
+COPY . .
 
-COPY . /code
-
+# 暴露端口
 EXPOSE 80
 
+# 默认启动命令（app）
 CMD ["python", "manage.py", "run-prod-server"]
-
