@@ -7,7 +7,8 @@ FastAPI service for interacting with Xiaohongshu (XHS): fetching posts, comments
 
 - `Python 3.9+`
 - `Poetry 1.2+`
-- `Postgresql 10+`
+- `MySQL 8.0+`
+
 
 
 ## Development
@@ -64,6 +65,11 @@ help you manage your project more easily. To get all available commands type thi
 python manage.py --help
 ```
 
+### Run the fastapi app with uvicorn
+
+```shell
+uvicorn app.main:get_application --factory --host 0.0.0.0 --port 8000 --reload
+```
 ## Credits
 
 This package was created with [Cookiecutter](https://github.com/cookiecutter/cookiecutter) and the [cookiecutter-fastapi](https://github.com/tobi-de/cookiecutter-fastapi) project template.
