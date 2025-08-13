@@ -13,25 +13,27 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: redcollector-app
-    working_dir: /srv/app
     env_file:
       - ./.env
+    volumes:
+      - ./:/srv/app
     depends_on:
       - redis
     ports:
       - "8000:80"
     restart: unless-stopped
-    command: python manage.py run-prod-server
 
   worker:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: redcollector-worker
-    working_dir: /srv/app
     env_file:
       - ./.env
+    volumes:
+      - ./:/srv/app
     depends_on:
       - redis
+      - app
     restart: unless-stopped
-    command: python manage.py run-worker
+    command: ["python", "manage.py", "run-worker"]

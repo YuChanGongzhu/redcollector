@@ -1,11 +1,11 @@
-# 第一阶段：生成 requirements.txt
+# === 第一阶段：生成 requirements.txt ===
 FROM python:3.10-slim as requirements-stage
 
 WORKDIR /tmp
 
-# 安装 pip 和 poetry
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir poetry
+# 使用国内镜像安装 pip 和 poetry
+RUN pip install --no-cache-dir --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple && \
+    pip install --no-cache-dir poetry -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 复制依赖文件
 COPY ./pyproject.toml ./poetry.lock* /tmp/
@@ -13,7 +13,7 @@ COPY ./pyproject.toml ./poetry.lock* /tmp/
 # 导出 requirements.txt
 RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-# 第二阶段：最终运行镜像
+# === 第二阶段：最终运行镜像 ===
 FROM python:3.10-slim
 
 WORKDIR /srv/app
@@ -25,7 +25,7 @@ RUN apt-get update && \
 
 # 复制 requirements 并安装
 COPY --from=requirements-stage /tmp/requirements.txt ./requirements.txt
-RUN pip install --no-cache-dir --upgrade -r ./requirements.txt
+RUN pip install --no-cache-dir --upgrade -r ./requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 复制项目代码
 COPY . .
