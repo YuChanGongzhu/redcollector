@@ -25,11 +25,14 @@ services:
     command: >
       bash -lc "
         set -euo pipefail;
+        sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list &&
+        sed -i 's/security.debian.org/mirrors.aliyun.com\/debian-security/g' /etc/apt/sources.list &&
         apt-get update &&
         apt-get install -y --no-install-recommends build-essential libffi-dev libssl-dev curl &&
-        pip install --no-cache-dir --upgrade pip &&
-        pip install --no-cache-dir poetry &&
+        pip install --no-cache-dir --upgrade pip -i https://mirrors.aliyun.com/pypi/simple/ &&
+        pip install --no-cache-dir poetry -i https://mirrors.aliyun.com/pypi/simple/ &&
         poetry config virtualenvs.create false &&
+        poetry source add --default aliyun https://mirrors.aliyun.com/pypi/simple/ &&
         poetry install --no-dev --no-interaction --no-ansi &&
         (aerich upgrade || aerich init-db) &&
         python manage.py run-prod-server
@@ -52,11 +55,14 @@ services:
     command: >
       bash -lc "
         set -euo pipefail;
+        sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list &&
+        sed -i 's/security.debian.org/mirrors.aliyun.com\/debian-security/g' /etc/apt/sources.list &&
         apt-get update &&
         apt-get install -y --no-install-recommends build-essential libffi-dev libssl-dev curl &&
-        pip install --no-cache-dir --upgrade pip &&
-        pip install --no-cache-dir poetry &&
+        pip install --no-cache-dir --upgrade pip -i https://mirrors.aliyun.com/pypi/simple/ &&
+        pip install --no-cache-dir poetry -i https://mirrors.aliyun.com/pypi/simple/ &&
         poetry config virtualenvs.create false &&
+        poetry source add --default aliyun https://mirrors.aliyun.com/pypi/simple/ &&
         poetry install --no-dev --no-interaction --no-ansi &&
         python manage.py run-worker
       "
