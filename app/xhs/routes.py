@@ -177,7 +177,7 @@ async def reply_comment(request: ReplyCommentRequest):
     """回复小红书评论
     
     Args:
-        request: 包含cookies、note_url、comment_id、content等参数的请求体
+        request: 包含cookies、note_id、comment_id、content等参数的请求体
         
     Returns:
         ApiResponse: 回复结果响应
@@ -186,7 +186,7 @@ async def reply_comment(request: ReplyCommentRequest):
         api = XhsAPI()
         api.reply_comment(
             cookies_str=request.cookies,
-            note_url=request.note_url,
+            note_id=request.note_id,
             comment_id=request.comment_id,
             content=request.content
         )

@@ -63,6 +63,6 @@ class UrlConvertResponse(BaseModel):
 class ReplyCommentRequest(BaseModel):
     """回复评论请求模型"""
     cookies: str = Field(..., description="Cookie字符串")
-    note_url: str = Field(..., description="笔记URL")
+    note_id: str = Field(..., description="笔记ID")
     comment_id: str = Field(..., description="评论ID")
     content: str = Field(..., description="回复内容")
