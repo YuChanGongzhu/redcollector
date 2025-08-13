@@ -58,3 +58,11 @@ class UrlConvertResponse(BaseModel):
     note_id: Optional[str] = Field(default=None, description="笔记ID")
     xsec_token: Optional[str] = Field(default=None, description="安全令牌")
     xsec_source: Optional[str] = Field(default=None, description="安全来源")
+
+
+class ReplyCommentRequest(BaseModel):
+    """回复评论请求模型"""
+    cookies: str = Field(..., description="Cookie字符串")
+    note_id: str = Field(..., description="笔记ID")
+    comment_id: str = Field(..., description="评论ID")
+    content: str = Field(..., description="回复内容")

@@ -102,6 +102,7 @@ class XhsAPI:
                 return comments_list
                 
             format_dict = {
+                'note_id': note_params['note_id'],
                 'content': comment.get('content', ''),
                 'like_count': comment.get('like_count', 0),
                 'nickname': comment.get('user_info', {}).get('nickname', ''),
@@ -123,6 +124,7 @@ class XhsAPI:
                     return comments_list
                     
                 sub_format_dict = {
+                    'note_id': note_params['note_id'],
                     'content': sub_comment.get('content', ''),
                     'like_count': sub_comment.get('like_count', 0),
                     'nickname': sub_comment.get('user_info', {}).get('nickname', ''),
@@ -203,6 +205,7 @@ class XhsAPI:
                     return
                     
                 sub_format_dict = {
+                    'note_id': note_id,
                     'content': sub_comment.get('content', ''),
                     'like_count': sub_comment.get('like_count', 0),
                     'nickname': sub_comment.get('user_info', {}).get('nickname', ''),
@@ -597,19 +600,18 @@ class XhsAPI:
             return None
         return merge_info
     
-    def reply_comment(self,cookies_str, note_url, comment_id, content):
+    def reply_comment(self,cookies_str, note_id, comment_id, content):
         """回复评论
         
         Args:
             cookies_str (str): Cookies字符串
-            note_url (str): 笔记URL
+            note_id (str): 笔记ID
             comment_id (str): 评论ID
             content (str): 回复内容
         """
-        note_params = self.extract_url_params(note_url)
         uri = "/api/sns/web/v1/comment/post"
         params = {
-            "note_id": note_params['note_id'],
+            "note_id": note_id,
             "target_comment_id": comment_id,
             "content": content,
             "at_users": []

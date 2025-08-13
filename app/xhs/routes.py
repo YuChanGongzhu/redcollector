@@ -12,7 +12,8 @@ from .schemas import (
     NoteResponse,
     ApiResponse,
     UrlConvertRequest,
-    UrlConvertResponse
+    UrlConvertResponse,
+    ReplyCommentRequest
 )
 from .xhs_api import XhsAPI
 from .services import XhsService
@@ -169,3 +170,33 @@ async def search_notes_batch(requests: List[SearchRequest], background_tasks: Ba
     except Exception as e:
         logger.error(f"批量搜索失败: {e}")
         raise HTTPException(status_code=500, detail=f"批量搜索失败: {str(e)}")
+
+
+@router.post("/reply_comment", response_model=ApiResponse)
+async def reply_comment(request: ReplyCommentRequest):
+    """回复小红书评论
+    
+    Args:
+        request: 包含cookies、note_id、comment_id、content等参数的请求体
+        
+    Returns:
+        ApiResponse: 回复结果响应
+    """
+    try:
+        api = XhsAPI()
+        api.reply_comment(
+            cookies_str=request.cookies,
+            note_id=request.note_id,
+            comment_id=request.comment_id,
+            content=request.content
+        )
+        
+        return ApiResponse(
+            success=True,
+            message="评论回复成功",
+            data=[]
+        )
+        
+    except Exception as e:
+        logger.error(f"回复评论失败: {e}")
+        raise HTTPException(status_code=500, detail=f"回复评论失败: {str(e)}")
