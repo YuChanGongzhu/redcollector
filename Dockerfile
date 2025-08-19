@@ -3,9 +3,20 @@ FROM python:3.10-slim
 WORKDIR /srv/app
 
 # 安装系统依赖和 Node.js
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential libffi-dev curl bash nodejs npm && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+# 更新包索引
+RUN apt-get update
+
+# 安装编译工具
+RUN apt-get install -y --no-install-recommends build-essential libffi-dev
+
+# 安装网络和工具依赖
+RUN apt-get install -y --no-install-recommends curl bash
+
+# 安装 Node.js 和 npm
+RUN apt-get install -y --no-install-recommends nodejs npm
+
+# 清理缓存
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # 复制项目文件
 COPY . .
