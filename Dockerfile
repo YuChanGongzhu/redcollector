@@ -24,10 +24,10 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 COPY . .
 
 # 升级 pip
-RUN pip install --no-cache-dir --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 安装 Poetry
-RUN pip install --no-cache-dir poetry -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install poetry -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 配置 Poetry
 RUN poetry config virtualenvs.create false
@@ -39,7 +39,7 @@ RUN poetry lock --no-interaction
 RUN poetry install --without dev --no-interaction --no-ansi
 
 # 安装额外依赖
-RUN pip install --no-cache-dir honcho gunicorn -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install honcho gunicorn -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 暴露端口
 EXPOSE 80
