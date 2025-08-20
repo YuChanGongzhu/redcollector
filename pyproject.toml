@@ -68,6 +68,11 @@ select = [
     "T" # https://github.com/charliermarsh/ruff#flake8-print
 ]
 
+[[tool.poetry.source]]
+name = "tuna"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+priority = "default"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
