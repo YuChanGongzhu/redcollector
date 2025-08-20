@@ -2,7 +2,9 @@ FROM python:3.10-slim
 
 WORKDIR /srv/app
 
-# 安装系统依赖和 Node.js
+# 换掉apt-get的源
+RUN sed -i 's@deb.debian.org@mirrors.cloud.tencent.com@g' /etc/apt/sources.list.d/debian.sources
+
 # 更新包索引
 RUN apt-get update
 
@@ -21,12 +23,20 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 # 复制项目文件
 COPY . .
 
-# 安装 Poetry 和项目依赖（Poetry 2.x）
-RUN pip install --no-cache-dir --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple && \
-    pip install --no-cache-dir poetry -i https://pypi.tuna.tsinghua.edu.cn/simple && \
-    poetry config virtualenvs.create false && \
-    poetry install --without dev --no-interaction --no-ansi && \
-    pip install --no-cache-dir honcho gunicorn -i https://pypi.tuna.tsinghua.edu.cn/simple
+# 升级 pip
+RUN pip install --no-cache-dir --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 安装 Poetry
+RUN pip install --no-cache-dir poetry -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 配置 Poetry
+RUN poetry config virtualenvs.create false
+
+# 安装项目依赖
+RUN poetry install --without dev --no-interaction --no-ansi
+
+# 安装额外依赖
+RUN pip install --no-cache-dir honcho gunicorn -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 暴露端口
 EXPOSE 80
