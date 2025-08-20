@@ -32,7 +32,8 @@ RUN pip install --no-cache-dir poetry -i https://pypi.tuna.tsinghua.edu.cn/simpl
 # 配置 Poetry
 RUN poetry config virtualenvs.create false
 
-RUN poetry lock --no-update
+# 更新 lock 文件
+RUN poetry lock --no-interaction
 
 # 安装项目依赖
 RUN poetry install --without dev --no-interaction --no-ansi
