@@ -109,8 +109,8 @@ class XhsAPI:
                 'comment_id': comment.get('id', ''),
                 'comment_location': comment.get('ip_location', ''),
                 'note_time': datetime.fromtimestamp(
-                    int(int(comment.get('create_time', '0'))/1000)
-                ).strftime("%Y-%m-%d %H:%M:%S")
+                    int(float(comment.get('create_time', 0))/1000)
+                ).strftime("%Y-%m-%d %H:%M:%S") if comment.get('create_time') else "未知时间"
             }
             comments_list.append(format_dict)
             
@@ -131,8 +131,8 @@ class XhsAPI:
                     'comment_id': sub_comment.get('id', ''),
                     'comment_location': sub_comment.get('ip_location', ''),
                     'note_time': datetime.fromtimestamp(
-                        int(int(sub_comment.get('create_time', '0'))/1000)
-                    ).strftime("%Y-%m-%d %H:%M:%S")
+                        int(float(sub_comment.get('create_time', 0))/1000)
+                    ).strftime("%Y-%m-%d %H:%M:%S") if sub_comment.get('create_time') else "未知时间"
                 }
                 comments_list.append(sub_format_dict)
             
@@ -178,8 +178,9 @@ class XhsAPI:
         params = {
             "note_id": note_id,
             "root_comment_id": root_comment_id,
-            "num": 30,
+            "num": 10,
             "cursor": cursor,
+            "top_comment_id": "",
             "image_formats": "jpg,webp,avif",
             "xsec_token": xsec_token,
         }
@@ -189,9 +190,9 @@ class XhsAPI:
             headers, cookies, data = generate_request_params(cookies_str, splice_api)
             url = "https://edith.xiaohongshu.com/api/sns/web/v2/comment/sub/page"
             
-            response = requests.get(url, headers=headers, cookies=cookies, params=params, impersonate="chrome110")
+            response = requests.get(url=f"https://edith.xiaohongshu.com{splice_api}", cookies=cookies, headers=headers)
             response_data = response.json()
-                
+            print('rrss',response_data)
             if not response_data or not isinstance(response_data, dict) or 'data' not in response_data:
                 logger.warning("子评论API响应数据异常")
                 return
@@ -212,8 +213,8 @@ class XhsAPI:
                     'comment_id': sub_comment.get('id', ''),
                     'comment_location': sub_comment.get('ip_location', ''),
                     'note_time': datetime.fromtimestamp(
-                        int(int(sub_comment.get('create_time', '0'))/1000)
-                    ).strftime("%Y-%m-%d %H:%M:%S")
+                        int(float(sub_comment.get('create_time', 0))/1000)
+                    ).strftime("%Y-%m-%d %H:%M:%S") if sub_comment.get('create_time') else "未知时间"
                 }
                 comments_list.append(sub_format_dict)
             
@@ -305,11 +306,11 @@ class XhsAPI:
             uri = "/api/sns/web/v1/search/notes"
             params = {
                 "keyword": keyword,
-                "page": p,
-                "page_size": 20,
-                "search_id": generate_x_b3_traceid(21),
+                "page": str(p),
+                "page_size": "20",
+                "search_id": "",
                 "sort": "general",
-                "note_type": 0,
+                "note_type": "0",
                 "ext_flags": [],
                 "filters": [
                     {
@@ -385,21 +386,19 @@ class XhsAPI:
     
     def search_comments_by_keyword(self, cookies_str, keyword, num, comments_list: list = []):
         """根据关键词搜索的笔记下面的评论
-        
         Args:
             keyword (str): 搜索关键词
             num (int): 搜索的评论数量
         """
-    
         for p in range(1000):
             uri = "/api/sns/web/v1/search/notes"
             params = {
                 "keyword": keyword,
-                "page": 1,
-                "page_size": 20,
+                "page": "1",
+                "page_size": "20",
                 "search_id": generate_x_b3_traceid(21),
                 "sort": "general",
-                "note_type": 0,
+                "note_type": "0",
                 "ext_flags": [],
                 "filters": [
                     {
@@ -440,7 +439,6 @@ class XhsAPI:
                     "avif"
                 ]
             }
-            
             # 将params字典转换为查询字符串
             from urllib.parse import urlencode
             query_string = urlencode(params, doseq=True)
@@ -476,9 +474,9 @@ class XhsAPI:
                     # remaining_comments = num - len(comments_list)
                     self.get_comments(cookies_str, format_dict['url'], '', comments_list, max_comments=num)
                     
-                    # 如果评论列表长度超过num，就返回评论列表
-                    if len(comments_list) >= num:
-                        return comments_list
+                # 如果评论列表长度超过num，就返回评论列表
+                if len(comments_list) >= num:
+                    return comments_list
         
         # 如果循环结束仍未收集到足够的评论，返回已收集到的评论
         return comments_list
@@ -628,4 +626,4 @@ class XhsAPI:
             print(f"回复失败: {response.get('message', '未知错误')}")
 
 
-    
+

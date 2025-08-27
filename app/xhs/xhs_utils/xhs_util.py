@@ -2,11 +2,12 @@ import json
 import math
 import random
 import execjs
-
+import requests
 from loguru import logger
 import os
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs, urlencode
+
 # 获取当前文件的目录
 current_dir = Path(__file__).parent
 static_dir = current_dir.parent / 'static'
@@ -153,6 +154,7 @@ def generate_request_params(cookies_str, api, data=''):
         raise Exception("JavaScript engine not available")
     
     cookies = trans_cookies(cookies_str)
+    print(f'Cookies: {cookies}')
     logger.info(f'Cookies: {cookies}')
     a1 = cookies.get('a1')
     if not a1:
@@ -166,7 +168,7 @@ def splice_str(api, params):
     for key, value in params.items():
         if value is None:
             value = ''
-        url += key + '=' + value + '&'
+        url += key + '=' + str(value) + '&'
     return url[:-1]
 
 def trans_cookies(cookies_str):
@@ -219,3 +221,31 @@ def convert_discovery_to_explore_url(discovery_url):
     except Exception as e:
         print(f"URL转换失败: {e}")
         return None
+
+if __name__ == "__main__":
+    url = "https://edith.xiaohongshu.com/api/sns/web/v2/comment/sub/page"
+    
+    uri = "/api/sns/web/v2/comment/sub/page"
+    params = {
+        "note_id": "68a82bc8000000001c03088f",
+        "root_comment_id": "68ae445e00000000020163fe",
+        "num": "10",
+        "cursor": "68ae521a000000003001ef81",
+        "image_formats": "jpg,webp,avif",
+        "top_comment_id": "",
+        "xsec_token": "ABWmWAhF3QlQxwg9n6BrMOf4O2bepBjy_pcl3gq5hDVhM="
+    }
+    splice_api = splice_str(uri, params)
+    print(splice_api)
+    # 生成请求头和cookies
+    headers, cookies, data = generate_request_params("abRequestId=a134c493-a50b-5252-8195-a01326efae1d; xsecappid=xhs-pc-web; a1=198e57d295fg07uahm6bp5xp5nt6lcmtu186wsvk450000118915; webId=5a190424236156d2c3ae27aff8b1b745; gid=yjYd2WdyyK74yjYd2WfJjyMh2ik8W70x6KDUYT42CU2I9K28K1S69E888yyYjy284WyDWydY; webBuild=4.77.0; web_session=040069b9593484798b5f72219b3a4b14702e02; unread={%22ub%22:%2268ad8992000000001d004807%22%2C%22ue%22:%2268ae668b000000001c03c6aa%22%2C%22uc%22:29}; loadts=1756260885388; acw_tc=0ad5826817562627015413651e8fa04cee7cbc2b83e28db562747196fbad80; websectiga=cffd9dcea65962b05ab048ac76962acee933d26157113bb213105a116241fa6c; sec_poison_id=ecbbbe4f-f0a1-492f-8238-117888366b69", splice_api)
+    url = "https://edith.xiaohongshu.com/api/sns/web/v2/comment/sub/page"
+    print(headers)
+    final_uri = f"{uri}?" f"{urlencode(params)}"
+    response = requests.get(url=f"https://edith.xiaohongshu.com{splice_api}", cookies=cookies, headers=headers)
+    print(f"https://edith.xiaohongshu.com{splice_api}")
+    response_data = response.json()
+
+
+    print(response.text)
+    print(response)
