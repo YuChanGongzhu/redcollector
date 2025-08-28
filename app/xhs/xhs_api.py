@@ -14,7 +14,7 @@ import math
 import random
 from curl_cffi import requests
 from loguru import logger
-from .xhs_utils.xhs_util import splice_str, generate_request_params, generate_x_b3_traceid, get_common_headers,convert_discovery_to_explore_url
+from .xhs_utils.xhs_util import get_search_id,splice_str, generate_request_params, generate_x_b3_traceid, get_common_headers,convert_discovery_to_explore_url
 
 class XhsAPI:
     """小红书API类，封装了获取评论、搜索笔记等功能"""
@@ -306,55 +306,56 @@ class XhsAPI:
             uri = "/api/sns/web/v1/search/notes"
             params = {
                 "keyword": keyword,
-                "page": str(p),
+                "page": p,
                 "page_size": "20",
-                "search_id": "",
+                "search_id": get_search_id(),
                 "sort": "general",
                 "note_type": "0",
-                "ext_flags": [],
-                "filters": [
-                    {
-                        "tags": [
-                            "general"
-                        ],
-                        "type": "sort_type"
-                    },
-                    {
-                        "tags": [
-                            "不限"
-                        ],
-                        "type": "filter_note_type"
-                    },
-                    {
-                        "tags": [
-                            "不限"
-                        ],
-                        "type": "filter_note_time"
-                    },
-                    {
-                        "tags": [
-                            "不限"
-                        ],
-                        "type": "filter_note_range"
-                    },
-                    {
-                        "tags": [
-                            "不限"
-                        ],
-                        "type": "filter_pos_distance"
-                    }
-                ],
-                "geo": "",
-                "image_formats": [
-                    "jpg",
-                    "webp",
-                    "avif"
-                ]
+                # "ext_flags": [],
+                # "filters": [
+                #     {
+                #         "tags": [
+                #             "general"
+                #         ],
+                #         "type": "sort_type"
+                #     },
+                #     {
+                #         "tags": [
+                #             "不限"
+                #         ],
+                #         "type": "filter_note_type"
+                #     },
+                #     {
+                #         "tags": [
+                #             "不限"
+                #         ],
+                #         "type": "filter_note_time"
+                #     },
+                #     {
+                #         "tags": [
+                #             "不限"
+                #         ],
+                #         "type": "filter_note_range"
+                #     },
+                #     {
+                #         "tags": [
+                #             "不限"
+                #         ],
+                #         "type": "filter_pos_distance"
+                #     }
+                # ],
+                # "geo": "",
+                # "image_formats": [
+                #     "jpg",
+                #     "webp",
+                #     "avif"
+                # ]
             }
             
             # 这里需要实现具体的搜索逻辑
             # 暂时使用硬编码的cookies字符串
             headers, cookies, data = generate_request_params(cookies_str, uri, params)
+            print(headers)
             url = "https://edith.xiaohongshu.com/api/sns/web/v1/search/notes"
             try:
                 response_obj = requests.post(url, headers=headers, cookies=cookies, data=data.encode('utf-8'))
@@ -608,13 +609,14 @@ class XhsAPI:
             content (str): 回复内容
         """
         uri = "/api/sns/web/v1/comment/post"
+        
         params = {
             "note_id": note_id,
             "target_comment_id": comment_id,
             "content": content,
             "at_users": []
         }
-        
+
         headers, cookies, data = generate_request_params(cookies_str, uri, params)
         url = "https://edith.xiaohongshu.com/api/sns/web/v1/comment/post"
         
